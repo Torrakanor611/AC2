@@ -53,12 +53,14 @@
         int dez = v / 10;
         int uni = v % 10;
 
-        LATDbits.LATD6 = 1;   //             
-        LATDbits.LATD5 = 1;   // toggle display selection
+        LATDbits.LATD6 = !LATDbits.LATE6;   //             
+        LATDbits.LATD5 = !LATDbits.LATE5;;   // toggle display selection
 
-        LATB = (LATB & 0x80FF) | (display7Scodes[uni] << 8);
-
-        LATB = (LATB & 0x80FF) | (display7Scodes[dez] << 8);
+        if(LATDbits.LATD5 = 1){
+            LATB = (LATB & 0x80FF) | (display7Scodes[uni] << 8);
+        }else{
+            LATB = (LATB & 0x80FF) | (display7Scodes[dez] << 8);
+        }
 
         resetCoreTimer();
         while(readCoreTimer() < 200000);
