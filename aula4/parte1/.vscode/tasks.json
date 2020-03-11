@@ -1,0 +1,16 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "CompileToMips",
+        "type": "shell",
+        "command": "pcompile ${relativeFile}; ldpic32 ${relativeFileDirname}/${fileBasenameNoExtension}; rm ${relativeFileDirname}/*.hex;rm ${relativeFileDirname}/*.elf; rm *.map; rm ${relativeFileDirname}/*.o; pterm",
+            
+      },
+      {
+        "label": "Send to PIC",
+        "type": "shell",
+        "command":"ldpic32 ${relativeFile} ; pterm "
+      }
+    ]
+  }
