@@ -24,9 +24,7 @@
     TRISDbits.TRISD5 = 0;
     TRISDbits.TRISD6 = 0;
 
-    LATDbits.LATD5 = 1;             // set low enable
-    LATDbits.LATD6 = 0;
-
+    int display_flag = 0;
     int v = 0;
     int i = 0;
 
@@ -50,21 +48,25 @@
 
             //printInt(v, 10);
         }
+
         int dez = v / 10;
         int uni = v % 10;
 
-        LATDbits.LATD6 = !LATDbits.LATE6;   //             
-        LATDbits.LATD5 = !LATDbits.LATE5;;   // toggle display selection
+        display_flag = !display_flag;
 
-        if(LATDbits.LATD5 = 1){
+        if(display_flag){
+            LATDbits.LATD6 = 0;
+            LATDbits.LATD5 = 1;
             LATB = (LATB & 0x80FF) | (display7Scodes[uni] << 8);
         }else{
+            LATDbits.LATD5 = 0;
+            LATDbits.LATD6 = 1;
             LATB = (LATB & 0x80FF) | (display7Scodes[dez] << 8);
         }
 
         resetCoreTimer();
         while(readCoreTimer() < 200000);
-
+    
     }
     return 0;
  }

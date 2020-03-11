@@ -5,12 +5,12 @@
         "label": "CompileToMips",
         "type": "shell",
         "command": "pcompile ${relativeFile}; ldpic32 ${relativeFileDirname}/${fileBasenameNoExtension}; rm ${relativeFileDirname}/*.hex;rm ${relativeFileDirname}/*.elf; rm *.map; rm ${relativeFileDirname}/*.o; pterm",
-            
+        "problemMatcher": []
       },
       {
         "label": "Send to PIC",
         "type": "shell",
-        "command":"ldpic32 ${relativeFile} ; pterm "
+        "command": "ldpic32 ${relativeFile} ; pterm "
       }
     ]
   }
