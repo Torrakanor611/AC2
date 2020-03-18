@@ -45,8 +45,9 @@
             int med = sum/4;
 
             v = (med*33+511)/1023;
-
-            //printInt(v, 10);
+            
+            // Reset AD1IF
+            IFS1bits.AD1IF = 0;
         }
 
         int dez = v / 10;
