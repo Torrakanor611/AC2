@@ -2,13 +2,6 @@
 #include <detpic32.h>
 
 
-
-
-
-
-
-
-
 int main(void){
     // Configure the A/D module and port RB4 as analog input
     TRISBbits.TRISB4 = 1;           // RB4 digital output disconnected
