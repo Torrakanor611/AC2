@@ -56,14 +56,7 @@ void _int_(27) isr_adc(void){
     med_voltage = ADC1BUF0;
 
     voltage = (med_voltage*33 + 511) / 1023;
-
     
-    //putChar('\n');
-    //putChar('i');
-    //printInt((int) voltage , 10);
-
-
-
     IFS1bits.AD1IF = 0;             // clear/reset A/D interrupt flag   
 
 }
