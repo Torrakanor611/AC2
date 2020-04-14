@@ -69,11 +69,18 @@ void configureAll(){
     // Configure display
     TRISB = TRISB & 0x00FF;                  // configure RB8-RB14 as outputs         
     TRISD = TRISD & 0xFF9F;                 // configure RD5-RD6 as outputs
+
+    // Configure RB0 and RB1 as inputs
+    TRISB = TRISB | 0x2; 
 }
 
 // isr for timer 1
 void _int_(4) isr_T1(void){
-    AD1CON1bits.ASAM = 1;       // start ADC conversion
+
+    if(PORTBbits.RB0 && !PORTBbits.RB1){
+        AD1CON1bits.ASAM = 1;       // start ADC conversion
+    }
+    
     IFS0bits.T1IF = 0;          // reset Timer1 flag
 }
 
@@ -102,7 +109,7 @@ void _int_(27) isr_adc(void){
 
     voltage = (med_voltage*33 + 511) / 1023;
     
-    IFS1bits.AD1IF = 0;             // clear/reset A/D converter interrupt flag   
+    IFS1bits.AD1IF = 0;             // clear/reset A/D interrupt flag   
 }
 
 int main(void){          
@@ -110,7 +117,7 @@ int main(void){
                     // input, A/D module, timers T1 and T3, interrupts)          
     
     // Reset AD1IF, T1IF and T3IF flags
-    IFS1bits.AD1IF = 0;         // clear/reset A/D interrupt flag
+    IFS1bits.AD1IF = 0;                 // clear/reset A/D interrupt flag
     IFS0bits.T3IF = 0;          // reset timer 3 flag
     IFS0bits.T1IF = 0;          // reset timer 1 flag
 
