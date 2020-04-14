@@ -29,7 +29,7 @@ void configureAll(){
     OC1CONbits.OCM = 6;         // PWM mode on OCx; fault pin disabled    
     OC1CONbits.OCTSEL = 0;      // Use timer T2 as the time base for PWM generation    
     OC1RS = 12500;              //Ton constante defenida na função setPWM    
-    OC1CONbits.ON = 1;          // Enable OC1 module
+    OC1CONbits.ON = 1;          // Enable OC1 module 
 
 }
 
