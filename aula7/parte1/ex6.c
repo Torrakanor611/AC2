@@ -55,7 +55,7 @@ void configureAll(){
     AD1CON1bits.CLRASAM = 1;
 
     AD1CON3bits.SAMC = 16;
-    AD1CON2bits.SMPI = 0;           // 8 amostras consecutivas
+    AD1CON2bits.SMPI = 7           // 8 amostras consecutivas
 
     AD1CHSbits.CH0SA = 4;
 
@@ -104,8 +104,6 @@ void _int_(27) isr_adc(void){
     }
 
     int med_voltage = sum/8;
-
-    med_voltage = ADC1BUF0;
 
     voltage = (med_voltage*33 + 511) / 1023;
     

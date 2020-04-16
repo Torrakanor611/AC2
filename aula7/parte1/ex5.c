@@ -55,7 +55,7 @@ void configureAll(){
     AD1CON1bits.CLRASAM = 1;
 
     AD1CON3bits.SAMC = 16;
-    AD1CON2bits.SMPI = 0;           // 8 amostras consecutivas
+    AD1CON2bits.SMPI = 7;           // 8 amostras consecutivas
 
     AD1CHSbits.CH0SA = 4;
 
@@ -71,13 +71,13 @@ void configureAll(){
     TRISD = TRISD & 0xFF9F;                 // configure RD5-RD6 as outputs
 }
 
-// isr for timer 1
+// isr for timer 1 - 4 Hz, conversion frequecy
 void _int_(4) isr_T1(void){
     AD1CON1bits.ASAM = 1;       // start ADC conversion
     IFS0bits.T1IF = 0;          // reset Timer1 flag
 }
 
-// isr for timer 3
+// isr for timer 3 - 100 Hz, display refresh time
 void _int_(12) isr_T3(void){
     send2displays(voltage);
 
@@ -93,12 +93,19 @@ void _int_(27) isr_adc(void){
     int sum = 0;
     int i;
     for(i = 0; i < 8; i++){
-        sum += p[i*4];
+        sum = sum + p[i*4];
     }
 
     int med_voltage = sum/8;
+    // printInt10(med_voltage);
+    // putChar('-');
+    
+    // printInt10(ADC1BUF0);
+    // putChar('-');
+    // printInt10(med_voltage / ADC1BUF0);
+    // putChar('\n');
 
-    med_voltage = ADC1BUF0;
+    // med_voltage = ADC1BUF0;
 
     voltage = (med_voltage*33 + 511) / 1023;
     
