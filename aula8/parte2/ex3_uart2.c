@@ -40,37 +40,37 @@ void ConfigUart(unsigned int baud, char parity, unsigned int stopbits){
         baud = 115200;
     }
 
-    U1MODEbits.BRGH = (PBCLK + 8 * baud) / (16 * baud) - 1;
+    U2MODEbits.BRGH = (PBCLK + 8 * baud) / (16 * baud) - 1;
 
     // 2 – Configure number of data bits, parity and number of stop bits       
     //     (see U1MODE register)
     // data bits / parity / stop bits
-    U1MODEbits.BRGH = 0;   // Divisão por 16
+    U2MODEbits.BRGH = 0;   // Divisão por 16
 
     if(parity == 'N'){
-        U1MODEbits.PDSEL = 0;  // 8 bits sem paridade
+        U2MODEbits.PDSEL = 0;  // 8 bits sem paridade
     }else if(parity == 'E'){
-        U1MODEbits.PDSEL = 1;  // 8 bits paridade ímpar
+        U2MODEbits.PDSEL = 1;  // 8 bits paridade ímpar
     }else if(parity == 'O'){
-        U1MODEbits.PDSEL = 0x10;  // 8 bits paridade par
+        U2MODEbits.PDSEL = 0x10;  // 8 bits paridade par
     }else{
-        U1MODEbits.PDSEL = 0;  // 8 bits sem paridade
+        U2MODEbits.PDSEL = 0;  // 8 bits sem paridade
     }
-    U1MODEbits.PDSEL = 0;  // 8 bits sem paridade
-    U1MODEbits.STSEL = stopbits - 1;  // 1 stop bit
+    U2MODEbits.PDSEL = 0;  // 8 bits sem paridade
+    U2MODEbits.STSEL = stopbits - 1;  // 1 stop bit
 
     // Enable UART interrupts
-    IEC0bits.U1RXIE = 1;
+    IEC1bits.U2RXIE = 1;
     // Configure interrupt priority
-    IPC6bits.U1IP = 2;
+    IPC8bits.U2IP = 2;
     // Enable UART Interruption flag
-    IFS0bits.U1RXIF = 0;
+    IFS1bits.U2RXIF = 0;
 
     // 3 – Enable the trasmitter and receiver modules (see register U1STA)
-    U1STAbits.UTXEN = 1;
-    U1STAbits.URXEN = 1;
+    U2STAbits.UTXEN = 1;
+    U2STAbits.URXEN = 1;
     // 4 – Enable UART1 (see register U1MODE)    
-    U1MODEbits.ON = 1;
+    U2MODEbits.ON = 1;
 }
 
 
@@ -137,8 +137,8 @@ void configureAll(){
 }
 
 void putc(char byte2send){
-    while(U1STAbits.UTXBF == 1);
-    U1TXREG = byte2send;
+    while(U2STAbits.UTXBF == 1);
+    U2TXREG = byte2send;
 }
 
 void putString(char *str){       
@@ -181,32 +181,32 @@ void _int_(24) isr_uart1(void){
 
     // error detection
     if(IFS0bits.U1EIF == 1){
-        if(U1STAbits.OERR == 1){
-            U1STAbits.OERR = 0;
+        if(U2STAbits.OERR == 1){
+            U2STAbits.OERR = 0;
         }else{
-            char c = U1RXREG;
+            char c = U2RXREG;
         }
 
-        IFS0bits.U1RXIF = 0;     // clear Uart1 Interrupt flag
+        IFS1bits.U2RXIF = 0;     // clear Uart1 Interrupt flag
     }
 
-    if(IFS0bits.U1RXIF == 1){
-        if(U1RXREG == 'L'){
+    if(IFS1bits.U2RXIF == 1){
+        if(U2RXREG == 'L'){
             putString("maxVolt: ");
-            char dec = 0 | (voltage / 10);
+            char dec =  0 | (voltage / 10);
             putc(dec);
-            char uni = 0 | (voltage % 10);
+            char uni = 0x30 | (voltage % 10);
             putc(uni);
             putc('\n');
 
             putString("minVolt: ");
-            dec = 0 | (voltage / 10);
-            uni = 0 | (voltage % 10);
+            dec = 0x30 | ((voltMin & 0xF0) >> 4);
+            uni = 0x30 | (voltMin & 0x0F);
             putc('\n');
         }
     }
 
-    IFS0bits.U1RXIF = 0;     // clear Uart1 Interrupt flag
+    IFS1bits.U2RXIF = 0;     // clear Uart1 Interrupt flag
 }
 
 // Interrupction Handler
@@ -256,7 +256,7 @@ int main(void){
     IFS1bits.AD1IF = 0;         // clear/reset A/D interrupt flag
     IFS0bits.T3IF = 0;          // reset timer 3 flag
     IFS0bits.T1IF = 0;          // reset timer 1 flag
-    IFS0bits.U1RXIF = 0;        // clear Uart1 Interrupt flag
+    IFS1bits.U2RXIF = 0;        // clear Uart1 Interrupt flag
 
     EnableInterrupts();            // Global Interrupt Enable
 
